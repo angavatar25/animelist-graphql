@@ -1,24 +1,48 @@
+import { useState } from "react";
 import axiosInstance from "../axiosInstance";
 
 enum FetchMethod {
   POST = 'POST',
 };
 
-export const useRequester = () => {
-  const query = `
-  query ($id: Int) { # Define which variables will be used in the query (id)
-    Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-      id
-      title {
-        romaji
-        english
-        native
+const useRequester = () => {
+
+  const fetchAnimeList = () => {
+    const query = `
+      query ($page: Int, $perPage: Int, $search: String) {
+        Page(page: $page, perPage: $perPage) {
+          pageInfo {
+            total
+            perPage
+          }
+          media(search: $search, type: ANIME, sort: FAVOURITES_DESC) {
+            id
+            title {
+              romaji
+              english
+              native
+            }
+            type
+            genres
+          }
+        }
       }
-    }
+    `;
+
+    const variables = {
+      page: 1,
+      perPage: 3,
+    };
+
+    axiosInstance({ method: FetchMethod.POST, data: { query, variables } })
+      .then((res: any) => {
+        console.log(res)
+      })
   }
-  `;
-  axiosInstance({ method: FetchMethod.POST, data: { query } })
-    .then((res) => {
-      console.log(res)
-    })
+
+  return {
+    fetchAnimeList,
+  };
 };
+
+export default useRequester;

@@ -3,11 +3,12 @@ import logo from './logo.svg';
 import './App.css';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './ApolloClient/client';
-import { useRequester } from './hooks/useRequester';
+import TestComponent from './components/TestComponent';
 
-function App() {
+const App = () => {
   return (
     <ApolloProvider client={client}>
+      <TestComponent/>
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
