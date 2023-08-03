@@ -2,11 +2,13 @@ import styled from '@emotion/styled';
 
 export const AnimeCollectionsContainer = styled.div`
   padding: 20px;
+  cursor: pointer;
 `;
 
 export const AnimeCollectionCardContainer = styled.div`
   display: flex;
   margin-bottom: 10px;
+  cursor: pointer;
 `
 
 export const AnimeCardEmpty = styled.div`

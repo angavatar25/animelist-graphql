@@ -205,6 +205,7 @@ const AnimeList = () => {
 
       {animeData.Page.media.map((index) => (
         <AnimeCard
+          key={`anime-card-${index.id}`}
           onClick={() => navigateToAnimeDetail(index.id)}
           banner={index.bannerImage}
           title={index.title.english}

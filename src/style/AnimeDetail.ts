@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 export const AnimeDetailContainer = styled.div`
   padding: 20px;
+  position: relative;
 `;
 
 export const ImageBannerContainer = styled.div`
