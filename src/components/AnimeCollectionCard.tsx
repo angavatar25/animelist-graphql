@@ -8,21 +8,22 @@ import { css } from '@emotion/css';
 
 interface IAnimeCard {
   showEditButton?: boolean;
+  showActionButton?: boolean;
+  bannerImage: string;
+  name: string;
+  totalEpisodes: number;
   onClick?(): void;
   onDelete?(): void;
   onEdit?(): void;
 };
 
 const AnimeCollection = (props: IAnimeCard) => {
-  const { showEditButton = true } = props;
-
-  const isImageEmpty = false;
-  const imageUrl = 'https://cdn1.katadata.co.id/media/images/thumb/2022/11/09/KARAKTER_ANIME_TERIMUT-2022_11_09-23_24_11_40afed16ccfe66e4587285ea8eaada1e_960x640_thumb.jpg';
+  const { showEditButton = true, showActionButton = true } = props;
 
   const renderCollectionBanner = () => {
     return (
       <>
-        {!isImageEmpty ? <AnimeCardImage src={imageUrl}/> : <AnimeCardEmpty>C</AnimeCardEmpty>}
+        {props.bannerImage ? <AnimeCardImage src={props.bannerImage}/> : <AnimeCardEmpty>C</AnimeCardEmpty>}
       </>
     )
   }
@@ -34,6 +35,9 @@ const AnimeCollection = (props: IAnimeCard) => {
       <div className={css`
         padding-left: 15px;
         position: relative;
+        ${!showActionButton && `
+          margin: auto 0;
+        `}
       `}>        
         <div className={css`
           margin: auto 0;
@@ -42,60 +46,63 @@ const AnimeCollection = (props: IAnimeCard) => {
           <MainTitle
             fontSize="24px"
           >
-            Collection Name
+            {props.name}
           </MainTitle>
           <SubTitle>
-            10 Collections
+            {props.totalEpisodes} Collections
           </SubTitle>
         </div>
-        <div className={css`
-          display: flex;
-          gap: 10px;
-          position: absolute;
-          bottom: 10px;
-        `}>
-          <ButtonRounded
-            onClick={props.onDelete}
-            className={css`
-              color: #fff;
-              margin: auto 0;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            `}
-            backgroundColor="#dc4242"
-            padding="10px 20px"
-          >
-            <ImageResize
-              width="15px"
-              height="15px"
-              src={deleteIcon}
-              alt=""
-            />
-            <span className={css`padding-left: 5px`}>Delete</span>
-          </ButtonRounded>
-          {showEditButton ? (
+        {showActionButton ? (
+          <div className={css`
+            display: flex;
+            gap: 10px;
+            position: absolute;
+            bottom: 10px;
+          `}>
             <ButtonRounded
-              onClick={props.onEdit}
+              onClick={props.onDelete}
               className={css`
+                color: #fff;
                 margin: auto 0;
                 display: flex;
                 justify-content: center;
                 align-items: center;
               `}
-              backgroundColor="#0A50A3"
+              backgroundColor="#dc4242"
               padding="10px 20px"
             >
               <ImageResize
                 width="15px"
                 height="15px"
-                src={editIcon}
+                src={deleteIcon}
                 alt=""
               />
-              <span className={css`padding-left: 5px`}>Edit</span>
+              <span className={css`padding-left: 5px`}>Delete</span>
             </ButtonRounded>
-          ) : null}
-        </div>
+            {showEditButton ? (
+              <ButtonRounded
+                onClick={props.onEdit}
+                className={css`
+                  margin: auto 0;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  color: #fff;
+                `}
+                backgroundColor="#0A50A3"
+                padding="10px 20px"
+              >
+                <ImageResize
+                  width="15px"
+                  height="15px"
+                  src={editIcon}
+                  alt=""
+                />
+                <span className={css`padding-left: 5px`}>Edit</span>
+              </ButtonRounded>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </AnimeCollectionCardContainer>
   )

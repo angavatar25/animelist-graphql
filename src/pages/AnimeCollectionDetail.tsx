@@ -83,12 +83,6 @@ const AnimeCollectionDetail = () => {
             <SubTitle>Your best pick anime list</SubTitle>
           </div>
         </div>
-        <AnimeCollectionCard
-          showEditButton={false}
-        />
-        <AnimeCollectionCard
-          showEditButton={false}
-        />
       </AnimeCollectionsContainer>
     </>
   )

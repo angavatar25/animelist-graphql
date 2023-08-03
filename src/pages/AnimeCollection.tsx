@@ -8,6 +8,8 @@ import plusIcon from '../images/icon/plus-large.svg';
 import { css } from '@emotion/css';
 
 const AnimeCollection = () => {
+  const animeCollection = localStorage.getItem('animeCollection') || '[]';
+  const collectionParsed = JSON.parse(animeCollection);
   return (
     <AnimeCollectionsContainer>
       <div className={css`
@@ -29,7 +31,7 @@ const AnimeCollection = () => {
             height: fit-content;
             font-size: 16px;
             border: 1px solid #0A50A3;
-            color: #0A50A3;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -47,8 +49,15 @@ const AnimeCollection = () => {
           `}>Add collection</span>
         </ButtonRounded>
       </div>
-      <AnimeCollectionCard/>
-      <AnimeCollectionCard/>
+      {collectionParsed.length > 0 ? collectionParsed.map((index: any, i: number) => (
+        <AnimeCollectionCard
+          key={`anime-collection-${i}`}
+          showActionButton={true}
+          bannerImage={index.bannerImage}
+          name={index.name}
+          totalEpisodes={index.totalEpisodes}
+        />
+      )) : <p>No collection added yet</p>}
     </AnimeCollectionsContainer>
   )
 }
