@@ -1,30 +1,27 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './ApolloClient/client';
-import TestComponent from './components/TestComponent';
+
+import AnimeList from './pages/AnimeList';
+import AnimeDetail from './pages/AnimeDetail';
+import { ParentContainer } from './style/GeneralStyle';
+import AnimeCollection from './pages/AnimeCollection';
+import AnimeCollectionDetail from './pages/AnimeCollectionDetail';
 
 const App = () => {
   return (
     <ApolloProvider client={client}>
-      <TestComponent/>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <ParentContainer>
+        <Router>
+          <Routes>
+            <Route path='/' element={<AnimeList/>}/>
+            <Route path='/anime-detail' element={<AnimeDetail/>}/>
+            <Route path='/anime-collections' element={<AnimeCollection/>}/>
+            <Route path='/anime-collection/detail' element={<AnimeCollectionDetail/>}/>
+          </Routes>
+        </Router>
+      </ParentContainer>
     </ApolloProvider>
   );
 }

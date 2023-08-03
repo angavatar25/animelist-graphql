@@ -5,8 +5,12 @@ enum FetchMethod {
   POST = 'POST',
 };
 
-const useRequester = () => {
+interface IVariables {
+  page: number,
+  perPage: number,
+}
 
+const useRequester = () => {
   const fetchAnimeList = () => {
     const query = `
       query ($page: Int, $perPage: Int, $search: String) {
@@ -24,14 +28,17 @@ const useRequester = () => {
             }
             type
             genres
+            bannerImage
+            description
+            episodes
           }
         }
       }
     `;
 
-    const variables = {
+    const variables: IVariables = {
       page: 1,
-      perPage: 3,
+      perPage: 10,
     };
 
     axiosInstance({ method: FetchMethod.POST, data: { query, variables } })
