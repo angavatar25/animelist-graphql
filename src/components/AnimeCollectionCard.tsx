@@ -5,37 +5,15 @@ import deleteIcon from '../images/icon/icon-delete.svg';
 import editIcon from '../images/icon/icon-edit.svg';
 
 import { css } from '@emotion/css';
+import { IAnimeCollectionCard } from "../interface/anime.interface";
 
-interface IAnimeCard {
-  showEditButton?: boolean;
-  showActionButton?: boolean;
-  bannerImage: string;
-  name: string;
-  totalCollections?: Array<collection>;
-  onClick?: (string: string) => void;
-  onDelete?: (string: string) => void;
-  onEdit?(): void;
-};
-
-interface collection {
-  name: string,
-  animeList?: Array<animeData>,
-};
-
-interface animeData {
-  bannerImage: string,
-  id: number,
-  episodes: number,
-  name: string,
-};
-
-const AnimeCollection = (props: IAnimeCard) => {
+const AnimeCollection = (props: IAnimeCollectionCard) => {
   const { showEditButton = true, showActionButton = true } = props;
 
   const renderCollectionBanner = () => {
     return (
       <>
-        {props.bannerImage ? <AnimeCardImage src={props.bannerImage}/> : <AnimeCardEmpty>C</AnimeCardEmpty>}
+        {props.bannerImage ? <AnimeCardImage src={props.bannerImage} alt={props.bannerImage}/> : <AnimeCardEmpty>C</AnimeCardEmpty>}
       </>
     )
   }
@@ -78,7 +56,7 @@ const AnimeCollection = (props: IAnimeCard) => {
             bottom: 10px;
           `}>
             <ButtonRounded
-              onClick={() => props?.onDelete?.(props.name)}
+              onClick={props?.onDelete as () => void}
               className={css`
                 color: #fff;
                 margin: auto 0;
@@ -93,13 +71,13 @@ const AnimeCollection = (props: IAnimeCard) => {
                 width="15px"
                 height="15px"
                 src={deleteIcon}
-                alt=""
+                alt="deletIocn"
               />
               <span className={css`padding-left: 5px`}>Delete</span>
             </ButtonRounded>
             {showEditButton ? (
               <ButtonRounded
-                onClick={props.onEdit}
+                onClick={props.onEdit as () => void}
                 className={css`
                   margin: auto 0;
                   display: flex;
@@ -114,7 +92,7 @@ const AnimeCollection = (props: IAnimeCard) => {
                   width="15px"
                   height="15px"
                   src={editIcon}
-                  alt=""
+                  alt="editIcon"
                 />
                 <span className={css`padding-left: 5px`}>Edit</span>
               </ButtonRounded>

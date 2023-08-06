@@ -1,17 +1,21 @@
 import { AnimeCollectionsContainer } from "../style/AnimeCollections";
-import AnimeCollectionCard from "../components/AnimeCollectionCard";
 import { MainTitle, SubTitle } from "../style/AnimeList";
-import { ButtonRounded, ImageResize } from "../style/GeneralStyle";
+import { ButtonRounded, ImageResize, ToastBase } from "../style/GeneralStyle";
 import leftArrow from '../images/icon/left-arrow.svg';
 import timesIcon from '../images/icon/icon-times.svg';
+import emptyFolder from '../images/icon/remove-folder.svg';
 
 import { css } from '@emotion/css';
 import ModalDefault from "../components/ModalDefault";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AnimeCollection from "../components/AnimeCollectionCard";
-import AnimeCard from "../components/AnimeCard";
+import { useState } from "react";
 
 const AnimeCollectionDetail = () => {
+  const [showDeleteAnimeModal, setShowDeleteAnimeModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [animeName, setAnimeName] = useState('');
+
   const [searchParams] = useSearchParams();
   const collectionName = searchParams.get('name');
   const isCollectionAvailable = localStorage.getItem('animeCollection') || '[]';
@@ -26,10 +30,61 @@ const AnimeCollectionDetail = () => {
   const backToCollectionList = () => {
     navigate({ pathname: '/anime-collections' });
   }
+
+  const handleDeleteAnimeModal = () => {
+    setShowDeleteAnimeModal(!showDeleteAnimeModal);
+  }
+
+  const handleShowDeleteAnimeModal = (name: any, e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+
+    if (name) {
+      setAnimeName(name);
+      handleDeleteAnimeModal();
+    }
+  }
+
+  const showNoCollectionValidation = () => {
+    return (
+      <div className={css`
+        position: absolute;
+        left: 0;
+        transform: translateX(50%);
+        transform: translateY(50%);
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      `}>
+        <ImageResize
+          width="100px"
+          height="100px"
+          src={emptyFolder}
+          alt="emptyFoler"
+        />
+        <p>No anime list added in this collection</p>
+      </div>
+    )
+  }
+
+  const handleDeleteAnime = () => {
+    const animeCollectionIndex = animeList.findIndex((index: any) => index?.name.includes(animeName));
+    animeList.splice(animeCollectionIndex, 1);
+    localStorage.setItem("animeCollection", JSON.stringify(collectionParsed));
+
+    setShowToast(true);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000)
+
+    handleDeleteAnimeModal();
+  };
   return (
     <>
       <ModalDefault
-        showModal={false}
+        showModal={showDeleteAnimeModal}
       >
         <div className={css`
           background-color: #ECECF2;
@@ -58,12 +113,16 @@ const AnimeCollectionDetail = () => {
             <p className={css`text-align: center`}>Are you sure to delete this from your collection ?</p>
             <div className={css`justify-content: center; display: flex; gap: 10px;`}>
               <ButtonRounded
+                onClick={handleDeleteAnimeModal}
+                className={css`color: #fff`}
                 backgroundColor="#dc4242"
                 padding="10px 20px"
               >
                 No
               </ButtonRounded>
               <ButtonRounded
+                onClick={handleDeleteAnime}
+                className={css`color: #fff`}
                 backgroundColor="#0A50A3"
                 padding="10px 20px"
               >
@@ -91,27 +150,34 @@ const AnimeCollectionDetail = () => {
               width="15px"
               height="15px"
               src={leftArrow}
-              alt=""
+              alt="leftArrow"
             />
           </ButtonRounded>
           <div className={css`
             line-height: 1.5;
           `}>
-            <MainTitle>List</MainTitle>
+            <MainTitle>{collectionName}</MainTitle>
             <SubTitle>Your best pick anime list</SubTitle>
           </div>
         </div>
         {animeList && animeList.length > 0 ?
           animeList.map((index: any, i: number) => (
-            <AnimeCard
+            <AnimeCollection
               onClick={() => navigateToAnimeDetail(index.id)}
+              onDelete={(e: any) => handleShowDeleteAnimeModal(index.name, e)}
               key={`anime-collection-${i}`}
-              banner={index.bannerImage}
-              title={index.name}
-              genres={index.genres || []}
+              bannerImage={index.bannerImage}
+              name={index.name}
+              showActionButton={true}
+              showEditButton={false}
             />
-          )) : null
+          )) : showNoCollectionValidation()
         }
+        {showToast ? (
+          <ToastBase>
+            Anime Deleted
+          </ToastBase>
+        ) : null}
       </AnimeCollectionsContainer>
     </>
   )

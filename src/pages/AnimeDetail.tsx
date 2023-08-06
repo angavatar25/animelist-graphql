@@ -1,4 +1,10 @@
-import { AnimeContentContainer, AnimeDescription, AnimeDetailContainer, ImageBanner, ImageBannerContainer } from "../style/AnimeDetail";
+import { 
+  AnimeContentContainer,
+  AnimeDescription,
+  AnimeDetailContainer,
+  ImageBanner,
+  ImageBannerContainer
+} from "../style/AnimeDetail";
 import { AnimeGenre, FlexWrap, SubTitle } from "../style/AnimeList";
 import { ButtonRounded, ImageResize, MainTitle, ToastBase } from "../style/GeneralStyle";
 import leftArrow from '../images/icon/left-arrow.svg';
@@ -6,9 +12,11 @@ import leftArrow from '../images/icon/left-arrow.svg';
 import { css } from '@emotion/css';
 import { useNavigate } from "react-router";
 import ModalInputToCollection from "../components/ModalInputToCollection";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import useRequester from "../hooks/useRequester";
+import { IAnimeDetail } from "../interface/anime.interface";
+import { useQuery } from "@apollo/client";
+import { animeDetailQuery } from "../ApolloClient/query";
 
 interface IAnimeCollectionData {
   name: string;
@@ -23,7 +31,6 @@ interface animeData {
 };
 
 const AnimeDetail = () => {
-  const { fetchAnimeDetail, animeDetail } = useRequester();
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [showInputCollection, setShowInputCollection] = useState(false);
   const [showInputCollectionToast, setShowInputCollectionToast] = useState(false);
@@ -38,18 +45,6 @@ const AnimeDetail = () => {
   const collectionParsed = JSON.parse(isCollectionAvailable);
   let matchedAnimeData = [];
 
-  useEffect(() => {
-    if (animeId) {
-      fetchAnimeDetail(Number(animeId));
-    }
-  }, []);
-
-  const animeDetailData = animeDetail && animeDetail['Media'];
-  const animeTitle = animeDetailData?.title && animeDetailData?.title?.english;
-
-  if (collectionParsed.length > 0) {
-    matchedAnimeData = collectionParsed.filter((anime: IAnimeCollectionData) => anime.animeList && anime.animeList.some((list) => animeTitle && list.name.includes(animeTitle)));
-  }
 
   const handleOpenCollectionModal = () => {
     setShowCollectionModal(!showCollectionModal);
@@ -133,10 +128,9 @@ const AnimeDetail = () => {
       if (!animeList) {
         const data = [];
         data.push(animeCollectionData);
-        Object.assign(filterByAnimeCollection, { animeList: data });
-        const updatedAnimeList = collectionParsed[animeCollectionIndex].push(filterByAnimeCollection);
+        Object.assign(collectionParsed[animeCollectionIndex], { animeList: data });
 
-        localStorage.setItem('animeCollection', JSON.stringify(updatedAnimeList));
+        localStorage.setItem('animeCollection', JSON.stringify(collectionParsed));
       }
     }
 
@@ -151,6 +145,19 @@ const AnimeDetail = () => {
   const navigateToAnimeDetail = () => {
     navigate({ pathname: '/' });
   };
+
+  const variables = {
+    id: animeId,
+  };
+
+  const { loading, data: animeDetail } = useQuery(animeDetailQuery,{ variables });
+
+  const animeDetailData = animeDetail && animeDetail['Media'] as IAnimeDetail;
+  const animeTitle = animeDetailData?.title && animeDetailData?.title?.english;
+
+  if (collectionParsed.length > 0) {
+    matchedAnimeData = collectionParsed.filter((anime: IAnimeCollectionData) => anime.animeList && anime.animeList.some((list) => animeTitle && list.name.includes(animeTitle)));
+  }
 
   return (
     <>
@@ -168,64 +175,68 @@ const AnimeDetail = () => {
       />
       <AnimeDetailContainer>
         <div>
-          <ButtonRounded
-            onClick={navigateToAnimeDetail}
-            backgroundColor="#FFF"
-            padding="10px 20px"
-            isPositionAbsolute={true}
-          >
-            <ImageResize
-              width="15px"
-              height="15px"
-              src={leftArrow}
-              alt=""
-            />
-          </ButtonRounded>
-          <ImageBannerContainer>
-            <ImageBanner
-              src={animeDetailData?.bannerImage} alt=""
-            />
-          </ImageBannerContainer>
-          <AnimeContentContainer>
-            <MainTitle>{animeTitle}</MainTitle>
-            {animeDetailData?.episodes ? (
-              <SubTitle>Total episodes: {animeDetailData?.episodes}</SubTitle>
-            ) : <SubTitle>No episodes available</SubTitle>}
-            <AnimeDescription dangerouslySetInnerHTML={{__html: animeDetailData?.description as TrustedHTML}}/>
-            <FlexWrap>
-              {animeDetailData?.genres.slice(0, 3).map((index) => (
-                <AnimeGenre key={`genre-${index}`}>
-                  {index}
-                </AnimeGenre>
-              ))}
-            </FlexWrap>
-            <SubTitle>Collections</SubTitle>
-            <FlexWrap>
-              {matchedAnimeData.length > 0 ? matchedAnimeData.map((index: IAnimeCollectionData, i: number) => (
-                <AnimeGenre key={`anime-collection-${i}`}>
-                  {index.name}
-                </AnimeGenre>
-              )) : <p>No collections from this anime</p>}
-            </FlexWrap>
-            <div className={css`
-              text-align: center;
-            `}>
+          {loading ? <p>Loading anime detail</p> : (
+            <>
               <ButtonRounded
-                onClick={handleOpenCollectionModal}
-                backgroundColor="#fff"
-                padding="20px 30px"
-                className={css`
-                  width: 30vw;
-                  margin-top: 20px;
-                  font-size: 16px;
-                  border: 1px solid #0A50A3 !important;
-                  color: #0A50A3 !important;
-                `}
+                onClick={navigateToAnimeDetail}
+                backgroundColor="#FFF"
+                padding="10px 20px"
+                isPositionAbsolute={true}
               >
-                Add to my collection
+                <ImageResize
+                  width="15px"
+                  height="15px"
+                  src={leftArrow}
+                  alt="leftArrow"
+                />
               </ButtonRounded>
-            </div>
-          </AnimeContentContainer>
+              <ImageBannerContainer>
+                <ImageBanner
+                  src={animeDetailData?.bannerImage} alt=""
+                />
+              </ImageBannerContainer>
+              <AnimeContentContainer>
+                <MainTitle>{animeTitle}</MainTitle>
+                {animeDetailData?.episodes ? (
+                  <SubTitle>Total episodes: {animeDetailData?.episodes}</SubTitle>
+                ) : <SubTitle>No episodes available</SubTitle>}
+                <AnimeDescription dangerouslySetInnerHTML={{__html: animeDetailData?.description as TrustedHTML}}/>
+                <FlexWrap>
+                  {animeDetailData?.genres.slice(0, 3).map((index: Array<[]>) => (
+                    <AnimeGenre key={`genre-${index}`}>
+                      {index}
+                    </AnimeGenre>
+                  ))}
+                </FlexWrap>
+                <SubTitle>Collections</SubTitle>
+                <FlexWrap>
+                  {matchedAnimeData.length > 0 ? matchedAnimeData.map((index: IAnimeCollectionData, i: number) => (
+                    <AnimeGenre key={`anime-collection-${i}`}>
+                      {index.name}
+                    </AnimeGenre>
+                  )) : <p>No collections from this anime</p>}
+                </FlexWrap>
+                <div className={css`
+                  text-align: center;
+                `}>
+                  <ButtonRounded
+                    onClick={handleOpenCollectionModal}
+                    backgroundColor="#fff"
+                    padding="20px 30px"
+                    className={css`
+                      width: 30vw;
+                      margin-top: 20px;
+                      font-size: 16px;
+                      border: 1px solid #0A50A3 !important;
+                      color: #0A50A3 !important;
+                    `}
+                  >
+                    Add to my collection
+                  </ButtonRounded>
+                </div>
+              </AnimeContentContainer>
+            </>
+          )}
         </div>
         {showInputCollectionToast ? (
           <ToastBase>
