@@ -15,24 +15,38 @@ interface IModalInputToCollection {
   addCollection?(): void;
   inputCollection?(): void;
   onCloseInputCollection?(): void;
+  insertCollection?: (value: any) => void;
 };
 
 interface collection {
-  id: number,
-  name: string,
   bannerImage: string,
-  totalEpisodes: number,
-}
+  id: number,
+  episodes: number,
+  name: string,
+  animeList: Array<animeData>,
+};
+
+interface animeData {
+  bannerImage: string,
+  id: number,
+  episodes: number,
+  name: string,
+};
 
 const ModalInputToCollection = (props: IModalInputToCollection) => {
   const { showCollectionModal = false, collectionData } = props;
   const isCollectionAvailable = collectionData.length > 0;
+
+  const inputAnime = (info: any) => {
+    if (info) props.insertCollection?.(info);
+  };
 
   const handleInputCollectionName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (props.onChangeCollectionName) {
       props.onChangeCollectionName(e.target.value);
     }
   }
+
   const renderAddCollectionButton = () => {
     return (
       <>
@@ -103,11 +117,12 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
         <div>
           {collectionData.length > 0 ? collectionData.map((index, i) => (
             <AnimeCollection
+              onClick={inputAnime}
               key={`anime-collection-${i}`}
               showActionButton={false}
-              bannerImage={collectionData[0].bannerImage}
+              bannerImage={index.animeList && index.animeList[0].bannerImage}
               name={index.name}
-              totalEpisodes={index.totalEpisodes}
+              totalCollections={index.animeList}
             />
           )) : <p className={css`text-align: center;`}>No collection yet, add new collection</p>}
         </div>
@@ -143,6 +158,7 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
           </div>
           <div className={css`position: relative; text-align: center;`}>
             <InputBase
+              value={props.collectionName}
               onChange={handleInputCollectionName}
               type="text"
               placeholder="Input collection name"

@@ -11,7 +11,6 @@ export const AnimeCardContainer = styled.div`
 `
 
 export const TitleContainer = styled.div`
-  padding: 10px 0 30px 0;
   line-height: 35px;
 `
 

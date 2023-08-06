@@ -11,10 +11,22 @@ interface IAnimeCard {
   showActionButton?: boolean;
   bannerImage: string;
   name: string;
-  totalEpisodes: number;
-  onClick?(): void;
-  onDelete?(): void;
+  totalCollections?: Array<collection>;
+  onClick?: (string: string) => void;
+  onDelete?: (string: string) => void;
   onEdit?(): void;
+};
+
+interface collection {
+  name: string,
+  animeList?: Array<animeData>,
+};
+
+interface animeData {
+  bannerImage: string,
+  id: number,
+  episodes: number,
+  name: string,
 };
 
 const AnimeCollection = (props: IAnimeCard) => {
@@ -28,7 +40,7 @@ const AnimeCollection = (props: IAnimeCard) => {
     )
   }
   return (
-    <AnimeCollectionCardContainer onClick={props?.onClick}>
+    <AnimeCollectionCardContainer onClick={() => props?.onClick?.(props.name)}>
       <AnimeCardImageContainer>
         {renderCollectionBanner()}
       </AnimeCardImageContainer>
@@ -48,9 +60,15 @@ const AnimeCollection = (props: IAnimeCard) => {
           >
             {props.name}
           </MainTitle>
+          {props.totalCollections && props.totalCollections.length > 0 ? (
+            <SubTitle>
+              {props.totalCollections?.length} Collections
+            </SubTitle>
+          ) :
           <SubTitle>
-            {props.totalEpisodes} Collections
+            No Collections
           </SubTitle>
+        }
         </div>
         {showActionButton ? (
           <div className={css`
@@ -60,7 +78,7 @@ const AnimeCollection = (props: IAnimeCard) => {
             bottom: 10px;
           `}>
             <ButtonRounded
-              onClick={props.onDelete}
+              onClick={() => props?.onDelete?.(props.name)}
               className={css`
                 color: #fff;
                 margin: auto 0;
