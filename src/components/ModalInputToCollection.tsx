@@ -8,6 +8,7 @@ import plusIcon from '../images/icon/plus-large.svg';
 interface IModalInputToCollection {
   showCollectionModal: boolean;
   showInputCollection: boolean;
+  isCollectionContainChar?: boolean;
   collectionData: Array<collection>;
   collectionName: string;
   onChangeCollectionName: (value: string) => void;
@@ -15,7 +16,7 @@ interface IModalInputToCollection {
   addCollection?(): void;
   inputCollection?(): void;
   onCloseInputCollection?(): void;
-  insertCollection?: (value: any) => void;
+  insertCollection?(string: string): void;
 };
 
 interface collection {
@@ -37,7 +38,7 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
   const { showCollectionModal = false, collectionData } = props;
   const isCollectionAvailable = collectionData.length > 0;
 
-  const inputAnime = (info: any) => {
+  const inputAnime = (info: string) => {
     if (info) props.insertCollection?.(info);
   };
 
@@ -168,6 +169,14 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
               type="text"
               placeholder="Input collection name"
             />
+            {props.isCollectionContainChar ? (
+              <p className={css`
+                color: #dc4242;
+                `}
+              >
+                Collection contain special char
+              </p>
+            ) : null}
             <ButtonRounded
               onClick={props.addCollection}
               backgroundColor="#FFF"

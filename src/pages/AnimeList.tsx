@@ -7,6 +7,7 @@ import { css } from '@emotion/css';
 import { ButtonRounded } from "../style/GeneralStyle";
 import { useQuery } from "@apollo/client";
 import { animeListQuery } from "../ApolloClient/query";
+import { IAnimeList } from "../interface/anime.interface";
 
 const AnimeList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,12 +97,12 @@ const AnimeList = () => {
         </div>
         {loading ? <p>Loading anime list</p> : (
           <>
-            {animeList && animeList['media'] ? animeList['media'].map((index: any) => (
+            {animeList && animeList['media'] ? animeList['media'].map((index: IAnimeList) => (
               <AnimeCard
                 key={`anime-card-${index.id}`}
                 onClick={() => navigateToAnimeDetail(index.id)}
                 banner={index.bannerImage}
-                title={index.title.english}
+                title={(index?.title && index.title.english) || ''}
                 genres={index.genres}
               />
             )) : null}
