@@ -64,7 +64,7 @@ const AnimeList = () => {
     perPage: 10,
   };
 
-  const { loading, error, data: animeData } = useQuery(animeListQuery,{ variables: variablesTest });
+  const { loading, data: animeData } = useQuery(animeListQuery,{ variables: variablesTest });
 
   const animeList = animeData && animeData['Page'];
 
