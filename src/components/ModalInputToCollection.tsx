@@ -72,7 +72,7 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
               width="15px"
               height="15px"
               src={plusIcon}
-              alt=""
+              alt="addIcon"
             />
             <span className={css`
               padding-left: 5px
@@ -89,9 +89,14 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
       <div className={css`
         background-color: #ECECF2;
         max-width: 80%;
+        max-height: 450px;
+        overflow-y: scroll;
         width: 100%;
         border-radius: 10px;
         padding: 20px;
+        &::-webkit-scrollbar {
+          display: none;
+        }
       `}>
         <div className={css`
           margin-bottom: 30px;
@@ -120,7 +125,7 @@ const ModalInputToCollection = (props: IModalInputToCollection) => {
               onClick={inputAnime}
               key={`anime-collection-${i}`}
               showActionButton={false}
-              bannerImage={index.animeList && index.animeList[0].bannerImage}
+              bannerImage={index.animeList && index.animeList[0] && index.animeList[0].bannerImage}
               name={index.name}
               totalCollections={index.animeList}
             />
