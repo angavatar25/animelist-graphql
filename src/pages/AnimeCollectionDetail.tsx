@@ -10,6 +10,7 @@ import ModalDefault from "../components/ModalDefault";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AnimeCollection from "../components/AnimeCollectionCard";
 import { useState } from "react";
+import { animeData, collection } from "../interface/anime.interface";
 
 const AnimeCollectionDetail = () => {
   const [showDeleteAnimeModal, setShowDeleteAnimeModal] = useState(false);
@@ -20,7 +21,7 @@ const AnimeCollectionDetail = () => {
   const collectionName = searchParams.get('name');
   const isCollectionAvailable = localStorage.getItem('animeCollection') || '[]';
   const collectionParsed = JSON.parse(isCollectionAvailable);
-  const animeList = collectionParsed.find((index: any) => index.name === collectionName).animeList;
+  const animeList = collectionParsed.find((index: collection) => index.name === collectionName).animeList;
   const navigate = useNavigate();
 
   const navigateToAnimeDetail = (id: number) => {
@@ -35,7 +36,7 @@ const AnimeCollectionDetail = () => {
     setShowDeleteAnimeModal(!showDeleteAnimeModal);
   }
 
-  const handleShowDeleteAnimeModal = (name: any, e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowDeleteAnimeModal = (name: string, e: React.MouseEvent<HTMLButtonElement>) => {
     if (e && e.stopPropagation) e.stopPropagation();
 
     if (name) {
@@ -69,7 +70,7 @@ const AnimeCollectionDetail = () => {
   }
 
   const handleDeleteAnime = () => {
-    const animeCollectionIndex = animeList.findIndex((index: any) => index?.name.includes(animeName));
+    const animeCollectionIndex = animeList.findIndex((index: collection) => index?.name.includes(animeName));
     animeList.splice(animeCollectionIndex, 1);
     localStorage.setItem("animeCollection", JSON.stringify(collectionParsed));
 
@@ -161,10 +162,10 @@ const AnimeCollectionDetail = () => {
           </div>
         </div>
         {animeList && animeList.length > 0 ?
-          animeList.map((index: any, i: number) => (
+          animeList.map((index: animeData, i: number) => (
             <AnimeCollection
               onClick={() => navigateToAnimeDetail(index.id)}
-              onDelete={(e: any) => handleShowDeleteAnimeModal(index.name, e)}
+              onDelete={(e: React.MouseEvent<HTMLButtonElement>) => handleShowDeleteAnimeModal(index.name, e)}
               key={`anime-collection-${i}`}
               bannerImage={index.bannerImage}
               name={index.name}

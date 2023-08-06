@@ -11,7 +11,7 @@ import {
 interface IAnimeCard {
   banner: string,
   title: string,
-  genres: string[],
+  genres: Array<[]>,
   onClick?(): void;
 }
 

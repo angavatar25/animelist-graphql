@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 import ModalInputToCollection from "../components/ModalInputToCollection";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { IAnimeDetail } from "../interface/anime.interface";
+import { IAnimeDetail, collection } from "../interface/anime.interface";
 import { useQuery } from "@apollo/client";
 import { animeDetailQuery } from "../ApolloClient/query";
 
@@ -36,6 +36,7 @@ const AnimeDetail = () => {
   const [showInputCollectionToast, setShowInputCollectionToast] = useState(false);
   const [showAddAnimeToast, setShowAddAnimeToast] = useState(false);
   const [showAnimeExistToast, setShowAnimeExistToast] = useState(false);
+  const [isCollectionContainChar, setIsCollectionContainChar] = useState(false)
   const [collectionName, setCollectionName] = useState('');
 
   const navigate = useNavigate();
@@ -56,6 +57,16 @@ const AnimeDetail = () => {
 
   const handleAddCollection = () => {
     if (collectionName.length > 0) {
+      // Check if new collection contain special character
+      if (!/^[A-Za-z\s]*$/.test(collectionName)) {
+        setIsCollectionContainChar(true);
+
+        setTimeout(() => {
+          setIsCollectionContainChar(false);
+        }, 3000);
+
+        return;
+      }
       const collectionData = {
         name: collectionName,
       };
@@ -91,7 +102,7 @@ const AnimeDetail = () => {
   };
 
   const handleAddAnimeListToCollection = (anime: string) => {
-    const filterByAnimeCollection = collectionParsed.find((index: any) => index?.name.includes(anime));
+    const filterByAnimeCollection = collectionParsed.find((index: collection) => index?.name.includes(anime));
 
     const animeCollectionData = {
       id: animeDetailData?.id,
@@ -100,14 +111,14 @@ const AnimeDetail = () => {
       genres: animeDetailData?.genres,
     };
 
-    const animeCollectionIndex = collectionParsed.findIndex((index: any) => index?.name.includes(anime));
+    const animeCollectionIndex = collectionParsed.findIndex((index: collection) => index?.name.includes(anime));
 
     if (filterByAnimeCollection) {
       const { animeList } = filterByAnimeCollection;
 
       if (animeList) {
         const data = collectionParsed[animeCollectionIndex].animeList;
-        const isAnimeExist = data.some((index: any) => index.name.toLowerCase().includes(animeTitle?.toLowerCase()));
+        const isAnimeExist = data.some((index: animeData) => index.name.toLowerCase().includes(animeTitle?.toLowerCase()));
 
         if (isAnimeExist) {
           setShowAnimeExistToast(true);
@@ -172,6 +183,7 @@ const AnimeDetail = () => {
         addCollection={handleAddCollection}
         onChangeCollectionName={(e) => setCollectionName(e)}
         collectionName={collectionName}
+        isCollectionContainChar={isCollectionContainChar}
       />
       <AnimeDetailContainer>
         <div>

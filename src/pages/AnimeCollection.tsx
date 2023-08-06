@@ -14,6 +14,7 @@ import ModalDefault from "../components/ModalDefault";
 
 import timesIcon from '../images/icon/icon-times.svg';
 import emptyFolder from '../images/icon/remove-folder.svg';
+import { collection } from "../interface/anime.interface";
 
 interface IAnimeCollectionData {
   name: string;
@@ -90,7 +91,7 @@ const AnimeCollection = () => {
       return;
     }
 
-    const animeCollectionIndex = collectionParsed.findIndex((index: any) => index?.name.includes(selectedCollectionName));
+    const animeCollectionIndex = collectionParsed.findIndex((index: collection) => index?.name.includes(selectedCollectionName));
 
     collectionParsed[animeCollectionIndex].name = collectionName;
     localStorage.setItem('animeCollection', JSON.stringify(collectionParsed));
@@ -99,7 +100,7 @@ const AnimeCollection = () => {
   }
 
   const handleDeleteCollection = () => {
-    const animeCollectionIndex = collectionParsed.findIndex((index: any) => index?.name.includes(collectionName));
+    const animeCollectionIndex = collectionParsed.findIndex((index: collection) => index?.name.includes(collectionName));
     collectionParsed.splice(animeCollectionIndex, 1);
     localStorage.setItem("animeCollection", JSON.stringify(collectionParsed));
 
@@ -352,14 +353,14 @@ const AnimeCollection = () => {
             </div>
           </ButtonRounded>
         </div>
-        {collectionParsed.length > 0 ? collectionParsed.map((index: any, i: number) => (
+        {collectionParsed.length > 0 ? collectionParsed.map((index: collection, i: number) => (
           <AnimeCollectionCard
             onDelete={(e: React.MouseEvent<HTMLButtonElement>) => handleShowDeleteCollectionModal(index.name, e)}
             onClick={redirectToAnimeDetail}
             onEdit={(e: React.MouseEvent<HTMLButtonElement>) => handleShowEditCollectionModal(index.name, e)}
             key={`anime-collection-${i}`}
             showActionButton={true}
-            bannerImage={index.animeList && index.animeList[0] && index.animeList[0].bannerImage}
+            bannerImage={(index.animeList && index.animeList[0] && index.animeList[0].bannerImage) || null}
             name={index.name}
             totalCollections={index.animeList}
           />

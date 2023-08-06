@@ -12,6 +12,17 @@ export interface IAnimeDetail {
   };
 }
 
+export interface IAnimeList {
+  id: number,
+  title?: ITitleLanguage | '',
+  bannerImage: string
+  genres: Array<[]>,
+}
+
+export interface ITitleLanguage {
+  english: string | '';
+}
+
 export interface IAnimeCollectionCard {
   showEditButton?: boolean;
   showActionButton?: boolean;
