@@ -67,6 +67,7 @@ const AnimeDetail = () => {
 
         return;
       }
+
       const collectionData = {
         name: collectionName,
       };
@@ -153,7 +154,7 @@ const AnimeDetail = () => {
     }, 3000)
   };
 
-  const navigateToAnimeDetail = () => {
+  const navigateToAnimeList = () => {
     navigate({ pathname: '/' });
   };
 
@@ -190,7 +191,7 @@ const AnimeDetail = () => {
           {loading ? <p>Loading anime detail</p> : (
             <>
               <ButtonRounded
-                onClick={navigateToAnimeDetail}
+                onClick={navigateToAnimeList}
                 backgroundColor="#FFF"
                 padding="10px 20px"
                 isPositionAbsolute={true}
