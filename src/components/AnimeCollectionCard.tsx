@@ -1,7 +1,8 @@
-import { AnimeCardEmpty, AnimeCollectionCardContainer } from "../style/AnimeCollections";
+import { AnimeCollectionCardContainer } from "../style/AnimeCollections";
 import { AnimeCardImage, AnimeCardImageContainer, SubTitle } from "../style/AnimeList";
 import { ButtonRounded, ImageResize, MainTitle } from "../style/GeneralStyle";
 import deleteIcon from '../images/icon/icon-delete.svg';
+import emptyImage from '../images/icon/message-square-image.svg';
 import editIcon from '../images/icon/icon-edit.svg';
 
 import { css } from '@emotion/css';
@@ -13,7 +14,15 @@ const AnimeCollection = (props: IAnimeCollectionCard) => {
   const renderCollectionBanner = () => {
     return (
       <>
-        {props.bannerImage ? <AnimeCardImage src={props.bannerImage} alt={props.bannerImage}/> : <AnimeCardEmpty>C</AnimeCardEmpty>}
+        {props.bannerImage ?
+          <AnimeCardImage src={props.bannerImage} alt={props.bannerImage}/>
+          : <ImageResize
+              width="100px"
+              height="150px"
+              src={emptyImage}
+              alt="empty-image"
+              className={css`background-color: #ECF2F8;`}
+            />}
       </>
     )
   }
