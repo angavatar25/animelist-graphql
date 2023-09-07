@@ -271,7 +271,7 @@ const AnimeCollection = () => {
               value={collectionName}
               onChange={(e) => handleInputNewCollectionName(e)}
               type="text"
-              placeholder="Input collection name"
+              placeholder="Input collection"
             />
             {isCollectionContainChar ? (
               <p className={css`
